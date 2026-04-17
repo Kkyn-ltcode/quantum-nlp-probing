@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data files (large, versioned separately)
+data/raw/*.npy
+data/processed/*.npy
+data/processed/*.pkl
+*.h5
+
+# Model checkpoints
+results/checkpoints/*.pt
+results/checkpoints/*.pth
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Experiment tracking
+wandb/
+
+# Secrets
+.env
