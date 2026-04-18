@@ -8,13 +8,13 @@ Run with:
     cd /Users/nguyen/Documents/Work/Quantum
     python notebooks/lesson01_discocat.py
 
-What this script does:
-    1. Parses 5 English sentences into DisCoCat string diagrams
-    2. Inspects diagram structure (boxes, types, cups)
-    3. Saves diagram visualizations
-    4. Answers comprehension questions
+NOTE: BobcatParser requires downloading a model from a server that is
+currently offline (qnlp.cambridgequantum.com). This lesson uses TWO
+approaches:
+  Part A: cups_reader (works offline, simpler diagrams)
+  Part B: BobcatParser (requires model - we'll fix this separately)
 
-Your goal: Understand what a DisCoCat diagram IS before we build anything on top of it.
+Start with Part A. Come back to Part B once we resolve the model issue.
 """
 
 from pathlib import Path
@@ -24,17 +24,11 @@ output_dir = Path("results/figures")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 # ═══════════════════════════════════════════════
-# STEP 1: Initialize the parser
+# PART A: Explore diagrams with cups_reader
+# (works immediately — no model download needed)
 # ═══════════════════════════════════════════════
-from lambeq import BobcatParser
 
-print("Loading BobcatParser (this may take a moment on first run)...")
-parser = BobcatParser(verbose='suppress')
-print("Parser loaded.\n")
-
-# ═══════════════════════════════════════════════
-# STEP 2: Parse sentences and inspect diagrams
-# ═══════════════════════════════════════════════
+from lambeq import cups_reader, spiders_reader
 
 sentences = [
     "dogs chase cats",             # 1. Simple transitive (SVO)
@@ -44,86 +38,124 @@ sentences = [
     "cats are chased by dogs",     # 5. Passive voice
 ]
 
-diagrams = []
+print("=" * 60)
+print("  PART A: cups_reader diagrams")
+print("  (bag-of-words with cup connections)")
+print("=" * 60)
+
+cups_diagrams = []
 
 for i, sent in enumerate(sentences):
-    print(f"\n{'='*60}")
+    diagram = cups_reader.sentence2diagram(sent)
+    cups_diagrams.append(diagram)
+
+    print(f"\n{'─'*60}")
     print(f"  Sentence {i+1}: \"{sent}\"")
-    print(f"{'='*60}")
-
-    diagram = parser.sentence2diagram(sent)
-    diagrams.append(diagram)
-
-    # ─── Diagram-level info ───
-    print(f"\n  diagram.dom (input type):  {diagram.dom}")
+    print(f"{'─'*60}")
+    print(f"  diagram.dom (input type):  {diagram.dom}")
     print(f"  diagram.cod (output type): {diagram.cod}")
-
-    # ─── Box-level info ───
     print(f"\n  Boxes ({len(diagram.boxes)} total):")
+
+    word_count = 0
+    cup_count = 0
+    other_count = 0
+
     for j, box in enumerate(diagram.boxes):
-        print(f"    [{j}] name={box.name:20s}  dom={str(box.dom):20s}  cod={str(box.cod):20s}")
+        box_type = type(box).__name__
+        print(f"    [{j}] {box_type:15s} name={str(box.name):20s} "
+              f"dom={str(box.dom):25s} cod={str(box.cod):25s}")
 
-    # TODO 1: Count how many boxes are actual WORDS vs structural morphisms (cups/caps/swaps).
-    # Hint: Word boxes have a .name that is an actual English word.
-    #        Cups typically have names like 'CUP' or are instances of specific classes.
-    #        Try: type(box).__name__ to see the class of each box.
-    #
-    # Write your counting code here:
-    # word_count = ...
-    # cup_count = ...
-    # print(f"\n  Words: {word_count}, Cups: {cup_count}")
+        # Count by type
+        if box_type == "Word":
+            word_count += 1
+        elif box_type == "Cup":
+            cup_count += 1
+        else:
+            other_count += 1
 
-    # ─── Save the diagram visualization ───
+    print(f"\n  Summary: {word_count} words, {cup_count} cups, {other_count} other")
+
+    # Save diagram image
     try:
-        draw_path = output_dir / f"diagram_{i+1}_{sent.replace(' ', '_')}.png"
-        diagram.draw(figsize=(12, 4), path=str(draw_path))
-        print(f"\n  Diagram saved to: {draw_path}")
+        draw_path = output_dir / f"cups_diagram_{i+1}.png"
+        diagram.draw(figsize=(14, 4), path=str(draw_path))
+        print(f"  Diagram saved to: {draw_path}")
     except Exception as e:
-        print(f"\n  Could not draw diagram: {e}")
-
-# ═══════════════════════════════════════════════
-# STEP 3: Comparative Analysis
-# ═══════════════════════════════════════════════
-
-print(f"\n\n{'='*60}")
-print("  COMPARATIVE ANALYSIS")
-print(f"{'='*60}")
-
-# TODO 2: For each diagram, count the number of boxes and print a summary table.
-# Expected output format:
-#   Sentence                          | Boxes | Words | Cups | cod
-#   dogs chase cats                   |   ?   |   ?   |  ?   |  ?
-#   dogs run                          |   ?   |   ?   |  ?   |  ?
-#   ...
-#
-# Write your code here:
+        print(f"  Could not draw diagram: {e}")
 
 
 # ═══════════════════════════════════════════════
-# STEP 4: Answer the comprehension questions
+# PART A.2: Compare with spiders_reader
 # ═══════════════════════════════════════════════
 
-print(f"\n\n{'='*60}")
+print(f"\n\n{'=' * 60}")
+print("  PART A.2: spiders_reader diagrams")
+print("  (bag-of-words with spider merging)")
+print("=" * 60)
+
+for i, sent in enumerate(sentences):
+    diagram = spiders_reader.sentence2diagram(sent)
+
+    print(f"\n  \"{sent}\"")
+    print(f"    Boxes: {len(diagram.boxes)}, cod: {diagram.cod}")
+
+    for j, box in enumerate(diagram.boxes):
+        box_type = type(box).__name__
+        print(f"      [{j}] {box_type:15s} name={str(box.name):15s}")
+
+
+# ═══════════════════════════════════════════════
+# UNDERSTANDING THE DIFFERENCE
+# ═══════════════════════════════════════════════
+
+print(f"\n\n{'=' * 60}")
+print("  KEY INSIGHT")
+print("=" * 60)
+print("""
+  cups_reader and spiders_reader are SIMPLE readers:
+  - They treat every word the same way (no grammar).
+  - cups_reader connects words via cups (pair-wise contractions).
+  - spiders_reader merges all word meanings via a spider (fan-in).
+
+  Neither of these captures REAL syntax. The sentence
+  "dogs chase cats" and "cats chase dogs" produce IDENTICAL diagrams.
+
+  For REAL syntactic diagrams, we need a CCG parser like BobcatParser,
+  which understands that "chase" is a transitive verb (type n.r ⊗ s ⊗ n.l)
+  and creates cups that connect subject/verb/object properly.
+
+  The BobcatParser model server is currently offline. We will resolve
+  this in our next session. For now, study the cups/spiders diagrams
+  to understand the MECHANICS of diagrams (boxes, wires, cups, types).
+""")
+
+
+# ═══════════════════════════════════════════════
+# TODO: Answer these questions
+# ═══════════════════════════════════════════════
+
+print("=" * 60)
 print("  COMPREHENSION QUESTIONS")
-print(f"{'='*60}")
-
-# TODO 3: Answer these questions by replacing the "..." with your answers.
-# Base your answers on what you OBSERVED in the output above, not on guesses.
+print("=" * 60)
 
 answers = {
-    "Q1: How many boxes does 'dogs chase cats' have? (total, not just words)":
+    "Q1: In cups_reader, how many cups does 'dogs chase cats' have? "
+    "How many does 'big dogs chase small cats' have?":
         "...",
 
-    "Q2: What is diagram.cod for a valid sentence? (same for all 5?)":
+    "Q2: What is diagram.cod for every sentence? Is it always the same?":
         "...",
 
-    "Q3: In 'dogs that chase cats run', how is the relative clause connected to the subject?":
+    "Q3: In cups_reader, does 'dogs chase cats' have a DIFFERENT diagram "
+    "from 'cats chase dogs'? Why is this a problem for syntax?":
         "...",
 
-    "Q4: Do 'dogs chase cats' and 'cats are chased by dogs' have the same diagram structure?":
+    "Q4: What is the difference between a Cup and a Spider? "
+    "(Look at how they combine word meanings.)":
         "...",
 
-    "Q5: Do more complex sentences have more cups? What pattern do you see?":
+    "Q5: Why do we NEED BobcatParser instead of cups_reader for our "
+    "research? (Hint: think about what 'syntax skeleton' means.)":
         "...",
 }
 
@@ -131,5 +163,6 @@ for q, a in answers.items():
     print(f"\n  {q}")
     print(f"  → {a}")
 
+
 print("\n\nDone! Review the saved diagrams in results/figures/")
-print("When you're ready, share this script's output with me for review.")
+print("Share this output with me when ready.")
