@@ -5,6 +5,7 @@ lambeq>=0.4.0
 
 # Classical NLP
 sentence-transformers>=3.0.0
+transformers>=4.28.0,<5.0.0  # BobcatParser model requires transformers 4.x
 torch>=2.2.0
 spacy>=3.7.0
 

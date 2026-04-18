@@ -8,13 +8,14 @@ Run with:
     cd /Users/nguyen/Documents/Work/Quantum
     python notebooks/lesson01_discocat.py
 
-NOTE: BobcatParser requires downloading a model from a server that is
-currently offline (qnlp.cambridgequantum.com). This lesson uses TWO
-approaches:
-  Part A: cups_reader (works offline, simpler diagrams)
-  Part B: BobcatParser (requires model - we'll fix this separately)
+What this script does:
+    1. Parses 5 English sentences into DisCoCat string diagrams
+    2. Inspects diagram structure (boxes, types, cups)
+    3. Saves diagram visualizations
+    4. Answers comprehension questions
 
-Start with Part A. Come back to Part B once we resolve the model issue.
+Your goal: Understand what a DisCoCat diagram IS before we build anything
+on top of it.
 """
 
 from pathlib import Path
@@ -24,11 +25,20 @@ output_dir = Path("results/figures")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 # ═══════════════════════════════════════════════
-# PART A: Explore diagrams with cups_reader
-# (works immediately — no model download needed)
+# STEP 1: Initialize the parser
 # ═══════════════════════════════════════════════
+from lambeq import BobcatParser
 
-from lambeq import cups_reader, spiders_reader
+print("Loading BobcatParser (local model)...")
+parser = BobcatParser(
+    model_name_or_path='bobcat',  # points to ./bobcat/ directory
+    verbose='suppress'
+)
+print("Parser loaded.\n")
+
+# ═══════════════════════════════════════════════
+# STEP 2: Parse sentences and inspect diagrams
+# ═══════════════════════════════════════════════
 
 sentences = [
     "dogs chase cats",             # 1. Simple transitive (SVO)
@@ -38,22 +48,21 @@ sentences = [
     "cats are chased by dogs",     # 5. Passive voice
 ]
 
-print("=" * 60)
-print("  PART A: cups_reader diagrams")
-print("  (bag-of-words with cup connections)")
-print("=" * 60)
-
-cups_diagrams = []
+diagrams = []
 
 for i, sent in enumerate(sentences):
-    diagram = cups_reader.sentence2diagram(sent)
-    cups_diagrams.append(diagram)
-
-    print(f"\n{'─'*60}")
+    print(f"\n{'='*60}")
     print(f"  Sentence {i+1}: \"{sent}\"")
-    print(f"{'─'*60}")
-    print(f"  diagram.dom (input type):  {diagram.dom}")
+    print(f"{'='*60}")
+
+    diagram = parser.sentence2diagram(sent)
+    diagrams.append(diagram)
+
+    # ─── Diagram-level info ───
+    print(f"\n  diagram.dom (input type):  {diagram.dom}")
     print(f"  diagram.cod (output type): {diagram.cod}")
+
+    # ─── Box-level info ───
     print(f"\n  Boxes ({len(diagram.boxes)} total):")
 
     word_count = 0
@@ -65,7 +74,6 @@ for i, sent in enumerate(sentences):
         print(f"    [{j}] {box_type:15s} name={str(box.name):20s} "
               f"dom={str(box.dom):25s} cod={str(box.cod):25s}")
 
-        # Count by type
         if box_type == "Word":
             word_count += 1
         elif box_type == "Cup":
@@ -73,89 +81,89 @@ for i, sent in enumerate(sentences):
         else:
             other_count += 1
 
-    print(f"\n  Summary: {word_count} words, {cup_count} cups, {other_count} other")
+    print(f"\n  Summary: {word_count} words, {cup_count} cups, "
+          f"{other_count} other")
 
-    # Save diagram image
+    # ─── Save the diagram visualization ───
     try:
-        draw_path = output_dir / f"cups_diagram_{i+1}.png"
-        diagram.draw(figsize=(14, 4), path=str(draw_path))
+        draw_path = output_dir / f"diagram_{i+1}_{sent.replace(' ', '_')}.png"
+        diagram.draw(figsize=(14, 5), path=str(draw_path))
         print(f"  Diagram saved to: {draw_path}")
     except Exception as e:
         print(f"  Could not draw diagram: {e}")
 
 
 # ═══════════════════════════════════════════════
-# PART A.2: Compare with spiders_reader
+# STEP 3: Comparative Analysis
 # ═══════════════════════════════════════════════
 
-print(f"\n\n{'=' * 60}")
-print("  PART A.2: spiders_reader diagrams")
-print("  (bag-of-words with spider merging)")
-print("=" * 60)
+print(f"\n\n{'='*60}")
+print("  COMPARATIVE ANALYSIS")
+print(f"{'='*60}")
 
-for i, sent in enumerate(sentences):
-    diagram = spiders_reader.sentence2diagram(sent)
-
-    print(f"\n  \"{sent}\"")
-    print(f"    Boxes: {len(diagram.boxes)}, cod: {diagram.cod}")
-
-    for j, box in enumerate(diagram.boxes):
-        box_type = type(box).__name__
-        print(f"      [{j}] {box_type:15s} name={str(box.name):15s}")
-
-
-# ═══════════════════════════════════════════════
-# UNDERSTANDING THE DIFFERENCE
-# ═══════════════════════════════════════════════
-
-print(f"\n\n{'=' * 60}")
-print("  KEY INSIGHT")
-print("=" * 60)
+# TODO 1: Fill in this table by looking at the output above.
+# Replace the ? with actual numbers from your observations.
 print("""
-  cups_reader and spiders_reader are SIMPLE readers:
-  - They treat every word the same way (no grammar).
-  - cups_reader connects words via cups (pair-wise contractions).
-  - spiders_reader merges all word meanings via a spider (fan-in).
-
-  Neither of these captures REAL syntax. The sentence
-  "dogs chase cats" and "cats chase dogs" produce IDENTICAL diagrams.
-
-  For REAL syntactic diagrams, we need a CCG parser like BobcatParser,
-  which understands that "chase" is a transitive verb (type n.r ⊗ s ⊗ n.l)
-  and creates cups that connect subject/verb/object properly.
-
-  The BobcatParser model server is currently offline. We will resolve
-  this in our next session. For now, study the cups/spiders diagrams
-  to understand the MECHANICS of diagrams (boxes, wires, cups, types).
+  Sentence                       | Total | Words | Cups | cod
+  -------------------------------|-------|-------|------|-----
+  dogs chase cats                |   ?   |   ?   |   ?  |  ?
+  dogs run                       |   ?   |   ?   |   ?  |  ?
+  big dogs chase small cats      |   ?   |   ?   |   ?  |  ?
+  dogs that chase cats run       |   ?   |   ?   |   ?  |  ?
+  cats are chased by dogs        |   ?   |   ?   |   ?  |  ?
 """)
 
 
 # ═══════════════════════════════════════════════
-# TODO: Answer these questions
+# STEP 4: Deep inspection of word types
 # ═══════════════════════════════════════════════
 
-print("=" * 60)
+print(f"\n{'='*60}")
+print("  WORD TYPE ANALYSIS")
+print(f"{'='*60}")
+print("\n  Look at the cod (output type) of each Word box.")
+print("  This is the GRAMMATICAL TYPE assigned by the CCG parser.\n")
+
+for i, (sent, diagram) in enumerate(zip(sentences, diagrams)):
+    print(f"\n  \"{sent}\":")
+    for box in diagram.boxes:
+        if type(box).__name__ == "Word":
+            print(f"    {box.name:20s} → type: {box.cod}")
+
+
+# ═══════════════════════════════════════════════
+# STEP 5: Answer the comprehension questions
+# ═══════════════════════════════════════════════
+
+print(f"\n\n{'='*60}")
 print("  COMPREHENSION QUESTIONS")
-print("=" * 60)
+print(f"{'='*60}")
+
+# TODO 2: Answer these questions by replacing "..." with your answers.
+# Base your answers on what you OBSERVED in the output above.
 
 answers = {
-    "Q1: In cups_reader, how many cups does 'dogs chase cats' have? "
-    "How many does 'big dogs chase small cats' have?":
+    "Q1: How many total boxes does 'dogs chase cats' have? "
+    "How many are Words vs Cups?":
         "...",
 
     "Q2: What is diagram.cod for every sentence? Is it always the same?":
         "...",
 
-    "Q3: In cups_reader, does 'dogs chase cats' have a DIFFERENT diagram "
-    "from 'cats chase dogs'? Why is this a problem for syntax?":
+    "Q3: Look at the type of 'chase' in 'dogs chase cats'. "
+    "What does n.r ⊗ s ⊗ n.l mean? Why does it have TWO noun slots?":
         "...",
 
-    "Q4: What is the difference between a Cup and a Spider? "
-    "(Look at how they combine word meanings.)":
+    "Q4: Compare 'dogs that chase cats run' to 'dogs chase cats'. "
+    "What extra boxes/cups does the relative clause add?":
         "...",
 
-    "Q5: Why do we NEED BobcatParser instead of cups_reader for our "
-    "research? (Hint: think about what 'syntax skeleton' means.)":
+    "Q5: Do 'dogs chase cats' and 'cats are chased by dogs' have the "
+    "same diagram structure? (same number of boxes, cups, types?)":
+        "...",
+
+    "Q6: Look at the word types for 'dogs that chase cats run'. "
+    "What type does 'that' have? Why is it different from a noun?":
         "...",
 }
 
@@ -165,4 +173,4 @@ for q, a in answers.items():
 
 
 print("\n\nDone! Review the saved diagrams in results/figures/")
-print("Share this output with me when ready.")
+print("When ready, share this output with me for review.")
