@@ -106,11 +106,11 @@ print(f"{'='*60}")
 print("""
   Sentence                       | Total | Words | Cups | cod
   -------------------------------|-------|-------|------|-----
-  dogs chase cats                |   ?   |   ?   |   ?  |  ?
-  dogs run                       |   ?   |   ?   |   ?  |  ?
-  big dogs chase small cats      |   ?   |   ?   |   ?  |  ?
-  dogs that chase cats run       |   ?   |   ?   |   ?  |  ?
-  cats are chased by dogs        |   ?   |   ?   |   ?  |  ?
+  dogs chase cats                |   5   |   3   |   2  |  s
+  dogs run                       |   3   |   2   |   1  |  s
+  big dogs chase small cats      |   9   |   5   |   4  |  s
+  dogs that chase cats run       |   10   |   5   |   5  |  s
+  cats are chased by dogs        |   11   |   5   |   6  |  s
 """)
 
 
@@ -145,26 +145,26 @@ print(f"{'='*60}")
 answers = {
     "Q1: How many total boxes does 'dogs chase cats' have? "
     "How many are Words vs Cups?":
-        "...",
+        "3 boxes and 2 cups",
 
     "Q2: What is diagram.cod for every sentence? Is it always the same?":
-        "...",
+        "they are different",
 
     "Q3: Look at the type of 'chase' in 'dogs chase cats'. "
     "What does n.r ⊗ s ⊗ n.l mean? Why does it have TWO noun slots?":
-        "...",
+        "its need noun in the left and right to form a full sentence",
 
     "Q4: Compare 'dogs that chase cats run' to 'dogs chase cats'. "
     "What extra boxes/cups does the relative clause add?":
-        "...",
+        "well, dont know, look complicated",
 
     "Q5: Do 'dogs chase cats' and 'cats are chased by dogs' have the "
     "same diagram structure? (same number of boxes, cups, types?)":
-        "...",
+        "no they dont, even they have the same meaning but why the passive sentence structure different from active sentence?",
 
     "Q6: Look at the word types for 'dogs that chase cats run'. "
     "What type does 'that' have? Why is it different from a noun?":
-        "...",
+        "i dont know either, its look so complicated",
 }
 
 for q, a in answers.items():
