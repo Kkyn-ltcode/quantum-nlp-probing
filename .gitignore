@@ -20,6 +20,12 @@ data/processed/*.npy
 data/processed/*.pkl
 *.h5
 
+# Model files (large — cached at ~/.cache/lambeq/)
+bobcat/
+*.bin
+*.safetensors
+results/representations.pt
+
 # Model checkpoints
 results/checkpoints/*.pt
 results/checkpoints/*.pth
