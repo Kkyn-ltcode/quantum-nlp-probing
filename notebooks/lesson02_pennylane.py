@@ -380,28 +380,28 @@ print("=" * 60)
 answers = {
     "Q1: In Exercise 2, what is ⟨Z⟩ when θ = π/2? "
     "Why is it 0 and not 0.5?":
-        "...",
+        "when θ = π/2, Z is 0, because it rotate a quarter of a circle from 1 so it must be 0",
 
     "Q2: In Exercise 3, the output of angle encoding is cos(θ) "
     "for each qubit. If our input features are in range [-1, 1], "
     "should we scale them to [0, π] first? Why?":
-        "...",
+        "its not necessary",
 
     "Q3: How many trainable parameters does our PQC have? "
     "(count from the weights shape)":
-        "...",
+        "8",
 
     "Q4: In Exercise 5, why do we use only the FIRST qubit's "
     "expectation value for classification? Could we use all 4?":
-        "...",
+        "not sure about that",
 
     "Q5: What role do the CNOT gates play? What would happen "
     "if we removed all CNOT gates from the circuit?":
-        "...",
+        "it kinda access to its neighbor information and decide to rotate based on it, i guess",
 
     "Q6: Look at the training curve. Did the PQC converge? "
     "What is the final test accuracy?":
-        "...",
+        "yes it converged, mine was 100% accuracy",
 }
 
 for q, a in answers.items():

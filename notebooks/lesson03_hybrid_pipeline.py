@@ -466,15 +466,15 @@ answers = {
     "Q1: Look at the SBERT similarity matrix. What is the cosine "
     "similarity between 'dogs chase cats' and 'cats are chased by dogs'? "
     "Is it close to 1.0? What does this tell you about SBERT?":
-        "...",
+        "yes because these 2 sentences basically mean the same thing so their similarity score should be high (close to 1) so SBERT did a great job at capturing semantic and syntactic meaning.",
 
     "Q2: How many trainable parameters does the projection layer have? "
     "How does this compare to the PQC's trainable parameters?":
-        "...",
+        "768 * 8, much more than the PQC",
 
     "Q3: Why do we apply tanh() before scaling? What would happen if "
     "we fed raw projected values (which could be very large) as angles?":
-        "...",
+        "dont know",
 
     "Q4: Look at the 3-panel similarity comparison plot. Does the PQC "
     "change the similarity structure compared to the projection? "
