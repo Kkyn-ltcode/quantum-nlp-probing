@@ -490,7 +490,7 @@ answers = {
     "Q6: Look at Figure 3 (semantics vs syntax). Find a pair of sentences "
     "that are semantically SIMILAR but syntactically DIFFERENT, and a pair "
     "that are semantically DIFFERENT but syntactically SIMILAR. Name them.":
-        "...",
+        "its kinda hard to find because the syntax heat map's value are really high (0.92+), i need you to look at that to tell.",
 }
 
 for q, a in answers.items():

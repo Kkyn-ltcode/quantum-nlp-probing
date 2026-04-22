@@ -488,26 +488,26 @@ print("=" * 60)
 answers = {
     "Q1: How many parameters does the MLP have vs the PQC? "
     "Is this a fair comparison? How could we make it fairer?":
-        "...",
+        "the mlp has 3137 parameters and pqc has 3089, its quite fair",
 
     "Q2: Did both models achieve similar training accuracy? "
     "If yes, what does this tell us about the task difficulty?":
-        "...",
+        "both of them achieve 100% accuracy, this task is not that hard and the data is super small",
 
     "Q3: Compare CKA(PQC, Syntax) vs CKA(MLP, Syntax). "
     "Which model's representations are more aligned with "
     "syntactic structure? What does this mean for H2?":
-        "...",
+        "CKA(PQC, Syntax) is 0.15 while CKA(MLP, Syntax) is 0.09, which mean pqc is more syntax-alighed than MLP but atually not that much",
 
     "Q4: Look at CKA(PQC, MLP). Is it high or low? "
     "What does this tell us about whether PQC and MLP "
     "use similar or different representational strategies?":
-        "...",
+        "CKA(pqc, mlp) is 0.796 is quite high, it mean that pqc and mlp use similar representational strategies, i dont know pqc worth to invest more or not",
 
     "Q5: If you were writing the paper's Results section, "
     "how would you describe the PQC vs MLP comparison in "
     "one paragraph? (Try writing it.)":
-        "...",
+        "We trained a simple MLP with 4 hidden layers to serve as a classical baseline against our PQC. Both models achieved 100% accuracy on the syntactic task, suggesting the task is relatively easy and the dataset is small. In terms of representational structure, we found using CKA, the PQC exhibited stronger alignment with the underlying syntactic structure (CKA = 0.15) compared to the MLP (CKA = 0.09), the overall correlation between the two models was notably high (CKA = 0.796). This indicates that despite the PQC being a quantum model, it learns similar representational strategies to the classical MLP for this specific task. This raises questions about whether the quantum approach offers a significant advantage or if the observed quantum-classical divergence needs further investigation with more complex tasks.",
 }
 
 for q, a in answers.items():
