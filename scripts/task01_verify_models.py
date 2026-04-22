@@ -59,9 +59,10 @@ for name, model in models.items():
 
         model.zero_grad()
 
+        shape_str = str(tuple(out.shape))
         print(f"  {name:<20s}  {model.circuit_param_count():>8d}  "
               f"{model.total_param_count():>8d}  "
-              f"{tuple(out.shape):>12s}  {'✓' if has_grad else '✗':>5s}")
+              f"{shape_str:>12s}  {'✓' if has_grad else '✗':>5s}")
 
     except Exception as e:
         print(f"  {name:<20s}  FAILED: {e}")
