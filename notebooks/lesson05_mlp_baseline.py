@@ -33,7 +33,9 @@ import matplotlib.pyplot as plt
 torch.manual_seed(42)
 np.random.seed(42)
 
-output_dir = Path("results/figures")
+# Resolve project root from script location so paths work from any cwd
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+output_dir = PROJECT_ROOT / "results" / "figures"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -265,8 +267,8 @@ def compute_cka(X, Y):
     return hsic_xy / np.sqrt(hsic_xx * hsic_yy)
 
 # Load saved PQC representations and syntax fingerprints
-pqc_data = torch.load("results/representations.pt", weights_only=False)
-cka_data = torch.load("results/cka_analysis.pt", weights_only=False)
+pqc_data = torch.load(PROJECT_ROOT / "results" / "representations.pt", weights_only=False)
+cka_data = torch.load(PROJECT_ROOT / "results" / "cka_analysis.pt", weights_only=False)
 
 fingerprints = cka_data['fingerprints']
 
@@ -513,7 +515,7 @@ for q, a in answers.items():
     print(f"  → {a}")
 
 # Save everything
-save_path = Path("results/mlp_analysis.pt")
+save_path = PROJECT_ROOT / "results" / "mlp_analysis.pt"
 torch.save({
     'mlp_reps': {k: v.numpy() if isinstance(v, torch.Tensor) else v
                  for k, v in mlp_reps.items()},

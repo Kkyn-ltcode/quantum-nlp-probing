@@ -27,7 +27,10 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 np.random.seed(42)
-output_dir = Path("results/figures")
+
+# Resolve project root from script location so paths work from any cwd
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+output_dir = PROJECT_ROOT / "results" / "figures"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -254,7 +257,7 @@ print("  EXERCISE 3: The Core Probing Analysis")
 print("=" * 60)
 
 # Load saved representations from Lesson 3
-rep_path = Path("results/representations.pt")
+rep_path = PROJECT_ROOT / "results" / "representations.pt"
 if not rep_path.exists():
     print("\n  ⚠ results/representations.pt not found!")
     print("    Please run lesson03_hybrid_pipeline.py first.")
@@ -463,26 +466,26 @@ answers = {
     "Q1: Look at the fingerprint similarity. What is the cosine similarity "
     "between 'dogs chase cats' and 'cats are chased by dogs'? Compare this "
     "to their SBERT similarity (0.89). What does this difference tell you?":
-        "...",
+        "The cosine similarity between 'dogs chase cats' and 'cats are chased by dogs' is low because they different in structure eventhough they mean exactly the same thing, while SBERT similarity is high because they capture the semantic so they are opposite.",
 
     "Q2: The CKA sanity checks show CKA(X, 2*X) = 1.0. Why is scale "
     "invariance important for our analysis? (Hint: PQC outputs are in "
     "[-1,1] but syntax fingerprints have values like 5, 6, 10.)":
-        "...",
+        "Because what we want to know is the similarity of the structure between vectors, not about the volume",
 
     "Q3: Look at the CKA matrix. Which pair of representations has the "
     "HIGHEST CKA? Which has the LOWEST? What does this tell you about "
     "what information survives the pipeline?":
-        "...",
+        "the cka of (projected, pqc) is the highest (0.68) while (syntax, pqc) is the lowest, which mean after gone through the pqc, the majority of informations have lost, which is quite disappointing. but the cka of (projected, pqc) is still high, so we can conclude that the pqc can preserve the information after squishing too much informations (384 -> 8)",
 
     "Q4: Compare CKA(Projected, Syntax) vs CKA(PQC, Syntax). Did the PQC "
     "increase or decrease syntactic alignment? By how much? Is this a "
     "large or small effect?":
-        "...",
+        "the cka(projected, syntax) is 0.082 < cka(pqc,syntax) (0.15) but the different is not that much, maybe we test on a super small dataset so the result might not be that significant.",
 
     "Q5: We only have 7 sentences. Why is this a problem for CKA "
     "reliability? How many sentences would we need for the paper?":
-        "...",
+        "i think the higher the number of sentences, the more reliable of the cka will be, i guess we need about 2000+ sentences.",
 
     "Q6: Look at Figure 3 (semantics vs syntax). Find a pair of sentences "
     "that are semantically SIMILAR but syntactically DIFFERENT, and a pair "
@@ -496,7 +499,7 @@ for q, a in answers.items():
 
 
 # Save analysis results for future use
-analysis_path = Path("results/cka_analysis.pt")
+analysis_path = PROJECT_ROOT / "results" / "cka_analysis.pt"
 torch.save({
     'sentences': sentences,
     'fingerprints': fingerprints,

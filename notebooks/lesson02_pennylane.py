@@ -29,7 +29,9 @@ matplotlib.use('Agg')  # non-interactive backend for saving figures
 import matplotlib.pyplot as plt
 
 # Ensure output directory exists
-output_dir = Path("results/figures")
+# Resolve project root from script location so paths work from any cwd
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+output_dir = PROJECT_ROOT / "results" / "figures"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 

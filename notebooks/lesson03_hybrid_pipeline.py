@@ -35,7 +35,9 @@ import matplotlib.pyplot as plt
 torch.manual_seed(42)
 np.random.seed(42)
 
-output_dir = Path("results/figures")
+# Resolve project root from script location so paths work from any cwd
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+output_dir = PROJECT_ROOT / "results" / "figures"
 output_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -435,7 +437,7 @@ fig.savefig(output_dir / "representation_comparison.png", dpi=150)
 print(f"  Comparison plot saved to: {output_dir / 'representation_comparison.png'}")
 
 # Save representations for future probing (Lesson 4)
-save_path = Path("results/representations.pt")
+save_path = PROJECT_ROOT / "results" / "representations.pt"
 torch.save({
     'sentences': sentences,
     'sbert': reps['sbert'],
