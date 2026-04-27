@@ -100,18 +100,18 @@ answers = {
     "Q1: How many circuit params does the 16-qubit PQC (linear) "
     "have? How does this compare to the MLP's circuit params? "
     "Is this a fairer comparison than Lesson 5?":
-        "...",
+        "the 16-qubit PQC (linear) has 48 circuit params, the MLP has 128 circuit params, almost 3 times more than PQC (linear) but the total parameters of those two quite similar (6193 and 6273) so i'd say its quite fair, at least fairer than Lesson 5.",
 
     "Q2: Look at the Hilbert space dimension for 16 qubits "
     "(65,536). The MLP operates in R^16. Why is this massive "
     "difference in representational capacity important for "
     "our argument?":
-        "...",
+        "PQC do not scale linearly like classical models, they scale exponentially so with only 16 qubits they have about 6000 parameters to control a continuous 65000 dimensional space while a classical MLP will need 65000 X 65000 parameters to operate a hidden layers of 65000 neurons. this will demonstrate that quantum models can punch drastically above their weight class.",
 
     "Q3: What is the 'none' entanglement PQC? Why do we need "
     "it? (Hint: think ablation study — what happens if we "
     "remove all CNOTs?)":
-        "...",
+        "the 'none' models remove all two-qubits gates, leaving only independent, single qubit rotations. if the pqc linear outperformed the pqc none, then we will have mathematical proof that the multi-body correlations enabled by the entanglement are doing the heavy lifting the learning task. if pqc none performs just as well as the entangled one, then the dataset's features are independent enough that the quantum correlations aren't actually helping and single qubit superposition is sufficient.",
 }
 
 for q, a in answers.items():
